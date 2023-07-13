@@ -1,0 +1,152 @@
+ventas = {}
+asientos = [0] * 100
+precios = {
+    'Platinum': 120000,
+    'Gold': 80000,
+    'Silver': 50000
+}
+
+asistentes = {}
+
+
+def menu():
+    print("           MENU PRINCIPAL            ")
+    print("  (1) Comprar entradas                  ")
+    print("  (2) Mostrar ubicaciones disponibles   ")
+    print("  (3) Ver listado de asistentes         ")
+    print("  (4) Mostrar ganancias totales         ")
+    print("  (5) Salir                             ")
+
+
+def mostrar_asientos(asientos):
+    print("               tipos de asientos           ")
+    print("---------------------------------------")
+    print("Asientos del 1 al 20 Seccion Platinum")
+    print("Asientos del 21 al 50 Seccion Gold")
+    print("Asientos del 51 al 100 Seccion Silver")
+    print("----------------------------------------")
+    print("                  ESCENARIO               ")
+    print("\nAsientos Disponibles:")
+    for f in range(0, 100, 10):
+        for c in range(f, f + 10):
+            if asientos[c] == 0:
+                print(f"{c + 1}\t", end="")
+            else:
+                print("X\t", end="")
+        print()
+
+
+def comprarEntradas(numEntradas):
+    numero_entrada = 0
+    while numero_entrada < numEntradas:
+        mostrar_asientos(asientos)
+        try:
+            print(f"\nEntrada n° {numero_entrada+1}")
+            asiento = int(input("Ingrese el número de asiento que desea comprar para la entrada: "))
+        except ValueError:
+            print("Ingreso un caracter no válido. Intente ingresar un número!")
+            continue
+
+        if asiento < 1 or asiento > 100:
+            print("¡Asiento incorrecto!")
+            continue
+
+        if asientos[asiento - 1] == 1:
+            print("El asiento seleccionado no está disponible.")
+            mostrar_asientos(asientos)
+            continue
+
+        try:
+            rut = int(input("Ingrese el rut del asistente: "))
+        except ValueError:
+            print("Ingrese un valor numérico.")
+            continue
+
+        asientos[asiento - 1] = 1
+        asistentes[asiento] = rut
+
+        if asiento > 50:
+            precio = precios['Silver']
+        elif asiento > 20:
+            precio = precios['Gold']
+        else:
+            precio = precios['Platinum']
+
+        print(f"Asiento {asiento} comprado correctamente. Precio: ${precio}")
+        numero_entrada += 1
+
+
+def verAsistentes():
+    if len(asistentes) == 0:
+        print("Aún no hay asistentes.")
+    else:
+        print("LISTA DE ASISTENTES\n")
+        for n in asistentes:
+            print(f"RUT: {asistentes[n]}\n")
+
+
+def mostrarGanancias(asientos):
+    total = 0
+    numEntradas = 0
+    tipos = {'Platinum': 0, 'Gold': 0, 'Silver': 0}
+
+    for i, asiento in enumerate(asientos):
+        if asiento == 1:
+            numEntradas += 1
+            if i + 1 > 50:
+                tipos['Silver'] += 1
+                total += precios['Silver']
+            elif i + 1 > 20:
+                tipos['Gold'] += 1
+                total += precios['Gold']
+            else:
+                tipos['Platinum'] += 1
+                total += precios['Platinum']
+
+    print("TIPO DE ENTRADA  |  Cantidad   |  TOTAL\n\n")
+    for tipo, cantidad in tipos.items():
+      print(f"{tipo}:       | {cantidad}\t| $ {cantidad * precios[tipo]}")
+      print(f"TOTAL         | {numEntradas} \t| $ {total}")
+
+
+while True:
+    try:
+        menu()
+        opcion = int(input("Ingrese una opción: "))
+    except ValueError:
+        print("Ingresó un caracter no válido. Intente ingresar un número!")
+        continue
+
+    if opcion == 1:
+        try:
+            nEntradas = 0
+            while nEntradas < 1 or nEntradas > 3:
+                nEntradas = int(input("Ingrese la cantidad de entradas a comprar (máximo 3): "))
+        except ValueError:
+            print("Ingresó un caracter no válido. Intente ingresar un número!")
+            continue
+
+        comprarEntradas(nEntradas)
+
+    elif opcion == 2:
+        mostrar_asientos(asientos)
+
+    elif opcion == 3:
+        verAsistentes()
+
+    elif opcion == 4:
+        if len(asistentes) > 0:
+            mostrarGanancias(asientos)
+        else:
+            print("No hay asistentes aún!")
+
+    elif opcion == 5:
+        print("\n¡Hasta pronto!\n")
+        print("Sistema de Venta de Entradas")
+        print("Programado por: Ignacio Villarroel")
+        print("Fecha actual: 12/07/2023")
+        break
+
+    else:
+        print("Ingrese una opción válida!")
+        
